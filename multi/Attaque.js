@@ -36,6 +36,19 @@
     if (autresParticipants.length > 0) {
       this.pseudonymeAutreJoueur = autresParticipants[0];
       this.ajouterJoueur(autresParticipants[0]);
+      for (let index = 0; index < 2; index++) {
+        console.log("autre boucle");
+        if (this.listeJoueur[this.pseudonymeJoueur].place != 0) {
+          if (this.listeJoueur[this.pseudonymeAutreJoueur].place == 1) {
+            this.listeJoueur[this.pseudonymeAutreJoueur].place = 2;
+          } else if (this.listeJoueur[this.pseudonymeAutreJoueur].place == 2) {
+            this.listeJoueur[this.pseudonymeAutreJoueur].place = 1;
+          }
+        } else {
+          this.listeJoueur[this.pseudonymeJoueur].place = this.gererPremier();
+        }
+      }
+      console.log("place :" + this.listeJoueur[this.pseudonymeJoueur].place + "|||||||| place : " + this.listeJoueur[this.pseudonymeAutreJoueur].place)
       this.afficherPartie();
     }
   }
@@ -49,11 +62,11 @@
 
   ajouterJoueur(pseudonyme) {
     console.log("ajouterJoueur : " + pseudonyme);
-    
+    let numero = 0;
     this.listeJoueur[pseudonyme] = {
-      point: Attaque.NOMBRE_POINT
+      point: Attaque.NOMBRE_POINT,
+      place: numero
     };
-
   }
 
   recevoirVariable(variable) {
@@ -92,14 +105,13 @@
     this.champPointAutreJoueur.value = this.listeJoueur[this.pseudonymeAutreJoueur].point;
     this.champPoint.value = this.listeJoueur[this.pseudonymeJoueur].point;
     this.formulaireJeu.style.display = "block";
-    console.log("le 1er joueur est le : " + this.gererPremier());
   }
 
   genererForceAttaque() {
     let attaque1 = Math.floor(Math.random() * Attaque.FORCE_MAXIMUM) + 1;
-    console.log("De un = "+ attaque1);
+    console.log("De un = " + attaque1);
     let attaque2 = Math.floor(Math.random() * Attaque.FORCE_MAXIMUM) + 1;
-    console.log("De deux = "+ attaque2);
+    console.log("De deux = " + attaque2);
     let attaque = attaque1 + attaque2;
     if (attaque1 == attaque2) {
       console.log("vous avez fait un double, vous pouvez rejouer.");
