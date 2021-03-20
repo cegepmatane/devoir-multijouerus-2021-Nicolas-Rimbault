@@ -1,4 +1,4 @@
-﻿class Attaque {
+﻿class Lancer {
   constructor() {
     this.multiNode = new MultiNode();
     this.multiNode.confirmerConnexion = () => this.confirmerConnexion();
@@ -12,11 +12,12 @@
     this.formulaireAuthentification.addEventListener("submit", (evenementsubmit) => this.soumettreAuthentificationJoueur(evenementsubmit))
     this.champPseudonyme = document.getElementById("champ-pseudonyme");
     this.boutonAuthentification = document.getElementById("bouton-authentification");
+    this.boutonLancer = document.getElementById("bouton-lancer");
     this.formulaireJeu = document.getElementById("formulaire-jeu");
-    this.formulaireJeu.addEventListener("submit", (evenementsubmit) => this.soumettreAttaque(evenementsubmit))
+    this.formulaireJeu.addEventListener("submit", (evenementsubmit) => this.soumettreLancer(evenementsubmit))
     this.formulaireJeu.style.display = "none";
     this.champPoint = document.getElementById("champ-point-de-vie");
-    this.champAttaque = document.getElementById("champ-attaque");
+    this.champLancer = document.getElementById("champ-lancer");
     this.informationAutreJoueur = document.getElementById("information-autre-joueur");
     this.champPointAutreJoueur = document.getElementById("champ-point-de-vie-autre-joueur");
   }
@@ -46,7 +47,7 @@
               pseudonyme: this.pseudonymeAutreJoueur,
               valeur: 2
             };
-            this.multiNode.posterVariableTextuelle(Attaque.MESSAGE.PLACE, JSON.stringify(message));
+            this.multiNode.posterVariableTextuelle(Lancer.MESSAGE.PLACE, JSON.stringify(message));
 
           } else if (this.listeJoueur[this.pseudonymeJoueur].place == 2) {
             this.listeJoueur[this.pseudonymeAutreJoueur].place = 1;
@@ -55,7 +56,7 @@
               pseudonyme: this.pseudonymeAutreJoueur,
               valeur: 1
             };
-            this.multiNode.posterVariableTextuelle(Attaque.MESSAGE.PLACE, JSON.stringify(message));
+            this.multiNode.posterVariableTextuelle(Lancer.MESSAGE.PLACE, JSON.stringify(message));
           }
         } else {
           this.listeJoueur[this.pseudonymeJoueur].place = this.gererPremier();
@@ -77,7 +78,7 @@
     console.log("ajouterJoueur : " + pseudonyme);
     let numero = 0;
     this.listeJoueur[pseudonyme] = {
-      point: Attaque.NOMBRE_POINT,
+      point: Lancer.NOMBRE_POINT,
       place: numero
     };
   }
@@ -88,19 +89,19 @@
     
     if (message.pseudonyme == this.pseudonymeJoueur) {
       switch (variable.cle) {
-        case Attaque.MESSAGE.POINT:
+        case Lancer.MESSAGE.POINT:
           this.changerPointJoueur(message.valeur);
           break;
-        case Attaque.MESSAGE.PLACE:
+        case Lancer.MESSAGE.PLACE:
           this.changerPlace(message.valeur);
           break;
       }
     } else {
       switch (variable.cle) {
-        case Attaque.MESSAGE.ATTAQUE:
-          this.subirAttaque(message.valeur);
+        case Lancer.MESSAGE.LANCER:
+          this.subirLancer(message.valeur);
           break;
-        case Attaque.MESSAGE.POINT:
+        case Lancer.MESSAGE.POINT:
           this.changerPointAutreJoueur(message.valeur);
           break;
       }
@@ -133,6 +134,9 @@
     this.champPointAutreJoueur.value = this.listeJoueur[this.pseudonymeAutreJoueur].point;
     this.champPoint.value = this.listeJoueur[this.pseudonymeJoueur].point;
     this.formulaireJeu.style.display = "block";
+    if(this.listeJoueur[this.pseudonymeJoueur].place == 2){
+      this.boutonLancer.disabled = true;
+    }
   }
 
   definirPlaceAutreJoueur(){
@@ -148,41 +152,43 @@
     this.afficherPartie();
   }
 
-  genererForceAttaque() {
-    let attaque1 = Math.floor(Math.random() * Attaque.FORCE_MAXIMUM) + 1;
-    console.log("De un = " + attaque1);
-    let attaque2 = Math.floor(Math.random() * Attaque.FORCE_MAXIMUM) + 1;
-    console.log("De deux = " + attaque2);
-    let attaque = attaque1 + attaque2;
-    if (attaque1 == attaque2) {
+  genererForceLancer() {
+    let lancer1 = Math.floor(Math.random() * Lancer.FORCE_MAXIMUM) + 1;
+    console.log("De un = " + lancer1);
+    let lancer2 = Math.floor(Math.random() * Lancer.FORCE_MAXIMUM) + 1;
+    console.log("De deux = " + lancer2);
+    let lancer = lancer1 + lancer2;
+    if (lancer1 == lancer2) {
       console.log("vous avez fait un double, vous pouvez rejouer.");
     }
-    return attaque;
+    return lancer;
   }
 
   gererPremier() {
-    return Math.floor(Math.random() * Attaque.NOMBRE_JOUEUR_REQUIS) + 1;
+    return Math.floor(Math.random() * Lancer.NOMBRE_JOUEUR_REQUIS) + 1;
   }
 
-  soumettreAttaque(evenementsubmit) {
-    console.log("soumettreAttaque");
+  soumettreLancer(evenementsubmit) {
+    console.log("soumettreLancer");
     evenementsubmit.preventDefault();
-    let forceAttaque = this.genererForceAttaque();
-    this.champAttaque.value = forceAttaque;
+    let forceLancer = this.genererForceLancer();
+    this.champLancer.value = forceLancer;
     let message = {
       pseudonyme: this.pseudonymeJoueur,
-      valeur: forceAttaque
+      valeur: forceLancer
     };
-    this.multiNode.posterVariableTextuelle(Attaque.MESSAGE.ATTAQUE, JSON.stringify(message));
+    this.multiNode.posterVariableTextuelle(Lancer.MESSAGE.LANCER, JSON.stringify(message));
+    this.boutonLancer.disabled = true;
   }
 
-  subirAttaque(valeur) {
-    console.log("subirAttaque()=>valeur" + valeur);
+  subirLancer(valeur) {
+    console.log("subirLancer()=>valeur" + valeur);
     let message = {
       pseudonyme: this.pseudonymeJoueur,
       valeur: valeur
     };
-    this.multiNode.posterVariableTextuelle(Attaque.MESSAGE.POINT, JSON.stringify(message));
+    this.multiNode.posterVariableTextuelle(Lancer.MESSAGE.POINT, JSON.stringify(message));
+    this.boutonLancer.disabled = false;
   }
 
   changerPointJoueur(nouveauPoint) {
@@ -209,13 +215,13 @@
   }
 }
 
-Attaque.NOMBRE_JOUEUR_REQUIS = 2;
-Attaque.NOMBRE_POINT = 0;
-Attaque.FORCE_MAXIMUM = 5;
-Attaque.MESSAGE = {
-  ATTAQUE: "ATTAQUE",
+Lancer.NOMBRE_JOUEUR_REQUIS = 2;
+Lancer.NOMBRE_POINT = 0;
+Lancer.FORCE_MAXIMUM = 5;
+Lancer.MESSAGE = {
+  LANCER: "LANCER",
   POINT: "POINT",
   PLACE: "PLACE"
 };
 
-new Attaque();
+new Lancer();
