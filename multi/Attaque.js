@@ -39,22 +39,35 @@
       for (let index = 0; index < 2; index++) {
         console.log("autre boucle");
         if (this.listeJoueur[this.pseudonymeJoueur].place != 0) {
-          if (this.listeJoueur[this.pseudonymeAutreJoueur].place == 1) {
+          if (this.listeJoueur[this.pseudonymeJoueur].place == 1) {
             this.listeJoueur[this.pseudonymeAutreJoueur].place = 2;
-          } else if (this.listeJoueur[this.pseudonymeAutreJoueur].place == 2) {
+
+            let message = {
+              pseudonyme: this.pseudonymeAutreJoueur,
+              valeur: 2
+            };
+            this.multiNode.posterVariableTextuelle(Attaque.MESSAGE.PLACE, JSON.stringify(message));
+
+          } else if (this.listeJoueur[this.pseudonymeJoueur].place == 2) {
             this.listeJoueur[this.pseudonymeAutreJoueur].place = 1;
+
+            let message = {
+              pseudonyme: this.pseudonymeAutreJoueur,
+              valeur: 1
+            };
+            this.multiNode.posterVariableTextuelle(Attaque.MESSAGE.PLACE, JSON.stringify(message));
           }
         } else {
           this.listeJoueur[this.pseudonymeJoueur].place = this.gererPremier();
         }
       }
-      console.log("place :" + this.listeJoueur[this.pseudonymeJoueur].place + "|||||||| place : " + this.listeJoueur[this.pseudonymeAutreJoueur].place)
+      //console.log("place :" + this.listeJoueur[this.pseudonymeJoueur].place + "|||||||| place : " + this.listeJoueur[this.pseudonymeAutreJoueur].place)
       this.afficherPartie();
     }
   }
 
   apprendreAuthentification(pseudonyme) {
-    console.log("Nouvel ami " + pseudonyme + ": Joueur 2");
+    console.log("Nouvel ami " + pseudonyme);
     this.ajouterJoueur(pseudonyme);
     this.pseudonymeAutreJoueur = pseudonyme;
     this.afficherPartie();
@@ -72,10 +85,14 @@
   recevoirVariable(variable) {
     console.log("Surcharge de recevoirVariable " + variable.cle + " = " + variable.valeur);
     let message = JSON.parse(variable.valeur);
+    
     if (message.pseudonyme == this.pseudonymeJoueur) {
       switch (variable.cle) {
         case Attaque.MESSAGE.POINT:
           this.changerPointJoueur(message.valeur);
+          break;
+        case Attaque.MESSAGE.PLACE:
+          this.changerPlace(message.valeur);
           break;
       }
     } else {
@@ -90,6 +107,12 @@
     }
   }
 
+  changerPlace(valeur){
+    console.log("changerPlaceJoueur()=>valeur" + valeur);
+    this.listeJoueur[this.pseudonymeJoueur].place = valeur;
+    console.log("place du joueur "+ this.pseudonymeJoueur +" : " + this.listeJoueur[this.pseudonymeJoueur].place);
+  }
+
   soumettreAuthentificationJoueur(evenementsubmit) {
     console.log("soumettreAuthentificationJoueur");
     evenementsubmit.preventDefault();
@@ -100,6 +123,7 @@
   }
 
   afficherPartie() {
+    //console.log("place :" + this.listeJoueur[this.pseudonymeJoueur].place + "|||||||| place : " + this.listeJoueur[this.pseudonymeAutreJoueur].place);
     this.informationAutreJoueur.innerHTML =
       this.informationAutreJoueur.innerHTML.replace("{nom-autre-joueur}", this.pseudonymeAutreJoueur);
     this.champPointAutreJoueur.value = this.listeJoueur[this.pseudonymeAutreJoueur].point;
@@ -166,7 +190,6 @@
       alert("Vous avez perdu!");
     }
   }
-
 }
 
 Attaque.NOMBRE_JOUEUR_REQUIS = 2;
@@ -174,7 +197,8 @@ Attaque.NOMBRE_POINT = 0;
 Attaque.FORCE_MAXIMUM = 5;
 Attaque.MESSAGE = {
   ATTAQUE: "ATTAQUE",
-  POINT: "POINT"
+  POINT: "POINT",
+  PLACE: "PLACE"
 };
 
 new Attaque();
