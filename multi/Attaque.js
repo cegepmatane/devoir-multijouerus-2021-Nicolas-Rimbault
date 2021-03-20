@@ -15,11 +15,10 @@
     this.formulaireJeu = document.getElementById("formulaire-jeu");
     this.formulaireJeu.addEventListener("submit", (evenementsubmit) => this.soumettreAttaque(evenementsubmit))
     this.formulaireJeu.style.display = "none";
-    this.champPointDeVie = document.getElementById("champ-point-de-vie");
+    this.champPoint = document.getElementById("champ-point-de-vie");
     this.champAttaque = document.getElementById("champ-attaque");
     this.informationAutreJoueur = document.getElementById("information-autre-joueur");
-    this.champPointDeVieAutreJoueur = document.getElementById("champ-point-de-vie-autre-joueur");
-    this.place = 0;
+    this.champPointAutreJoueur = document.getElementById("champ-point-de-vie-autre-joueur");
   }
 
   confirmerConnexion() {
@@ -52,7 +51,7 @@
     console.log("ajouterJoueur : " + pseudonyme);
     
     this.listeJoueur[pseudonyme] = {
-      pointDeVie: Attaque.NOMBRE_POINT_DE_VIE
+      point: Attaque.NOMBRE_POINT
     };
 
   }
@@ -62,8 +61,8 @@
     let message = JSON.parse(variable.valeur);
     if (message.pseudonyme == this.pseudonymeJoueur) {
       switch (variable.cle) {
-        case Attaque.MESSAGE.POINT_DE_VIE:
-          this.changerPointdeVieJoueur(message.valeur);
+        case Attaque.MESSAGE.POINT:
+          this.changerPointJoueur(message.valeur);
           break;
       }
     } else {
@@ -71,8 +70,8 @@
         case Attaque.MESSAGE.ATTAQUE:
           this.subirAttaque(message.valeur);
           break;
-        case Attaque.MESSAGE.POINT_DE_VIE:
-          this.changerPointdeVieAutreJoueur(message.valeur);
+        case Attaque.MESSAGE.POINT:
+          this.changerPointAutreJoueur(message.valeur);
           break;
       }
     }
@@ -90,20 +89,20 @@
   afficherPartie() {
     this.informationAutreJoueur.innerHTML =
       this.informationAutreJoueur.innerHTML.replace("{nom-autre-joueur}", this.pseudonymeAutreJoueur);
-    this.champPointDeVieAutreJoueur.value = this.listeJoueur[this.pseudonymeAutreJoueur].pointDeVie;
-    this.champPointDeVie.value = this.listeJoueur[this.pseudonymeJoueur].pointDeVie;
+    this.champPointAutreJoueur.value = this.listeJoueur[this.pseudonymeAutreJoueur].point;
+    this.champPoint.value = this.listeJoueur[this.pseudonymeJoueur].point;
     this.formulaireJeu.style.display = "block";
     console.log("le 1er joueur est le : " + this.gererPremier());
   }
 
   genererForceAttaque() {
-    attaque1 = Math.floor(Math.random() * Attaque.FORCE_MAXIMUM) + 1;
+    let attaque1 = Math.floor(Math.random() * Attaque.FORCE_MAXIMUM) + 1;
     console.log("De un = "+ attaque1);
-    attaque2 = Math.floor(Math.random() * Attaque.FORCE_MAXIMUM) + 1;
+    let attaque2 = Math.floor(Math.random() * Attaque.FORCE_MAXIMUM) + 1;
     console.log("De deux = "+ attaque2);
-    attaque = attaque1 + attaque2;
+    let attaque = attaque1 + attaque2;
     if (attaque1 == attaque2) {
-      console.log("vous avez fait un double, vous pouvez rejouer.")
+      console.log("vous avez fait un double, vous pouvez rejouer.");
     }
     return attaque;
   }
@@ -128,30 +127,30 @@
     console.log("subirAttaque()=>valeur" + valeur);
     let message = {
       pseudonyme: this.pseudonymeJoueur,
-      valeur: this.listeJoueur[this.pseudonymeJoueur].pointDeVie - valeur
+      valeur: valeur
     };
-    this.multiNode.posterVariableTextuelle(Attaque.MESSAGE.POINT_DE_VIE, JSON.stringify(message));
+    this.multiNode.posterVariableTextuelle(Attaque.MESSAGE.POINT, JSON.stringify(message));
   }
 
-  changerPointdeVieJoueur(nouveauPointDeVie) {
-    console.log("changerPointdeVieJoueur()=>valeur" + nouveauPointDeVie);
-    this.listeJoueur[this.pseudonymeJoueur].pointDeVie = nouveauPointDeVie;
-    this.champPointDeVie.value = nouveauPointDeVie;
+  changerPointJoueur(nouveauPoint) {
+    console.log("changerPointJoueur()=>valeur" + nouveauPoint);
+    this.listeJoueur[this.pseudonymeAutreJoueur].point += nouveauPoint;
+    this.champPointAutreJoueur.value = this.listeJoueur[this.pseudonymeAutreJoueur].point;
     this.validerFinPartie();
   }
 
-  changerPointdeVieAutreJoueur(nouveauPointDeVie) {
-    console.log("changerPointdeVieAutreJoueur()=>valeur" + nouveauPointDeVie);
-    this.listeJoueur[this.pseudonymeAutreJoueur].pointDeVie = nouveauPointDeVie;
-    this.champPointDeVieAutreJoueur.value = nouveauPointDeVie;
+  changerPointAutreJoueur(nouveauPoint) {
+    console.log("changerPointAutreJoueur()=>valeur" + nouveauPoint);
+    this.listeJoueur[this.pseudonymeJoueur].point += nouveauPoint;
+    this.champPoint.value = this.listeJoueur[this.pseudonymeJoueur].point;
     this.validerFinPartie();
   }
 
   validerFinPartie() {
     console.log("validerFinPartie");
-    if (this.listeJoueur[this.pseudonymeAutreJoueur].pointDeVie <= 0) {
+    if (this.listeJoueur[this.pseudonymeJoueur].point >= 60) {
       alert("Vous avez gagné!");
-    } else if (this.listeJoueur[this.pseudonymeJoueur].pointDeVie <= 0) {
+    } else if (this.listeJoueur[this.pseudonymeAutreJoueur].point >= 60) {
       alert("Vous avez perdu!");
     }
   }
@@ -159,11 +158,11 @@
 }
 
 Attaque.NOMBRE_JOUEUR_REQUIS = 2;
-Attaque.NOMBRE_POINT_DE_VIE = 20;
+Attaque.NOMBRE_POINT = 0;
 Attaque.FORCE_MAXIMUM = 5;
 Attaque.MESSAGE = {
   ATTAQUE: "ATTAQUE",
-  POINT_DE_VIE: "POINT_DE_VIE"
+  POINT: "POINT"
 };
 
 new Attaque();
