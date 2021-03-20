@@ -63,6 +63,7 @@
       }
       //console.log("place :" + this.listeJoueur[this.pseudonymeJoueur].place + "|||||||| place : " + this.listeJoueur[this.pseudonymeAutreJoueur].place)
       this.afficherPartie();
+      this.definirPlaceAutreJoueur();
     }
   }
 
@@ -70,7 +71,6 @@
     console.log("Nouvel ami " + pseudonyme);
     this.ajouterJoueur(pseudonyme);
     this.pseudonymeAutreJoueur = pseudonyme;
-    this.afficherPartie();
   }
 
   ajouterJoueur(pseudonyme) {
@@ -111,6 +111,7 @@
     console.log("changerPlaceJoueur()=>valeur" + valeur);
     this.listeJoueur[this.pseudonymeJoueur].place = valeur;
     console.log("place du joueur "+ this.pseudonymeJoueur +" : " + this.listeJoueur[this.pseudonymeJoueur].place);
+    this.definirPlaceAutreJoueur();
   }
 
   soumettreAuthentificationJoueur(evenementsubmit) {
@@ -124,11 +125,27 @@
 
   afficherPartie() {
     //console.log("place :" + this.listeJoueur[this.pseudonymeJoueur].place + "|||||||| place : " + this.listeJoueur[this.pseudonymeAutreJoueur].place);
+
     this.informationAutreJoueur.innerHTML =
       this.informationAutreJoueur.innerHTML.replace("{nom-autre-joueur}", this.pseudonymeAutreJoueur);
+    this.informationAutreJoueur.innerHTML =
+      this.informationAutreJoueur.innerHTML.replace("{place-autre-joueur}", this.listeJoueur[this.pseudonymeAutreJoueur].place);
     this.champPointAutreJoueur.value = this.listeJoueur[this.pseudonymeAutreJoueur].point;
     this.champPoint.value = this.listeJoueur[this.pseudonymeJoueur].point;
     this.formulaireJeu.style.display = "block";
+  }
+
+  definirPlaceAutreJoueur(){
+    console.log("definirPlaceAutreJoueur" + this.listeJoueur[this.pseudonymeJoueur].place);
+    if(this.listeJoueur[this.pseudonymeJoueur].place == 1){
+      console.log("definir autre joueur sur 2");
+      this.listeJoueur[this.pseudonymeAutreJoueur].place = 2;
+    }
+    else if(this.listeJoueur[this.pseudonymeJoueur].place == 2){
+      console.log("definir autre joueur sur 1");
+      this.listeJoueur[this.pseudonymeAutreJoueur].place = 1;
+    }
+    this.afficherPartie();
   }
 
   genererForceAttaque() {
