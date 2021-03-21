@@ -20,6 +20,7 @@
     this.champLancer = document.getElementById("champ-lancer");
     this.informationAutreJoueur = document.getElementById("information-autre-joueur");
     this.champPointAutreJoueur = document.getElementById("champ-point-de-vie-autre-joueur");
+    this.lancerDouble = false;
   }
 
   confirmerConnexion() {
@@ -99,7 +100,8 @@
     } else {
       switch (variable.cle) {
         case Lancer.MESSAGE.LANCER:
-          this.subirLancer(message.valeur);
+          console.log("lance voir si double autre joueur     " + message.double);
+          this.voirSiDoubleAutreJoueur(message.valeur, message.double);
           break;
         case Lancer.MESSAGE.POINT:
           this.changerPointAutreJoueur(message.valeur);
@@ -158,12 +160,16 @@
     let lancer2 = Math.floor(Math.random() * Lancer.FORCE_MAXIMUM) + 1;
     console.log("De deux = " + lancer2);
     let lancer = lancer1 + lancer2;
+
     if (lancer1 == lancer2) {
-      console.log("vous avez fait un double, vous pouvez rejouer.");
+        alert("vous avez fait un double ! vous pouvez rejouer.");
+        this.lancerDouble = true;
     }
+
     return lancer;
   }
 
+  
   gererPremier() {
     return Math.floor(Math.random() * Lancer.NOMBRE_JOUEUR_REQUIS) + 1;
   }
@@ -175,20 +181,40 @@
     this.champLancer.value = forceLancer;
     let message = {
       pseudonyme: this.pseudonymeJoueur,
-      valeur: forceLancer
+      valeur: forceLancer,
+      double: this.lancerDouble
     };
+    if (this.lancerDouble == true){
+      this.boutonLancer.disabled = false;
+    }
+    else{
+      this.boutonLancer.disabled = true;
+    }
+
+    this.lancerDouble = false;
     this.multiNode.posterVariableTextuelle(Lancer.MESSAGE.LANCER, JSON.stringify(message));
-    this.boutonLancer.disabled = true;
+  }
+
+  voirSiDoubleAutreJoueur(valeur, double){
+    if (double == false) {
+      console.log("double est faut le bouton est FAUX -----------------")
+      this.boutonLancer.disabled = false;
+      this.subirLancer(valeur);
+    }
+    if(double == true) {
+      console.log("double est faut le bouton est VRAI---------------------")
+      this.boutonLancer.disabled = true;
+      this.subirLancer(valeur);
+    }
   }
 
   subirLancer(valeur) {
     console.log("subirLancer()=>valeur" + valeur);
-    let message = {
-      pseudonyme: this.pseudonymeJoueur,
-      valeur: valeur
-    };
-    this.multiNode.posterVariableTextuelle(Lancer.MESSAGE.POINT, JSON.stringify(message));
-    this.boutonLancer.disabled = false;
+      let message = {
+        pseudonyme: this.pseudonymeJoueur,
+        valeur: valeur
+      };
+      this.multiNode.posterVariableTextuelle(Lancer.MESSAGE.POINT, JSON.stringify(message));
   }
 
   changerPointJoueur(nouveauPoint) {
@@ -221,7 +247,8 @@ Lancer.FORCE_MAXIMUM = 5;
 Lancer.MESSAGE = {
   LANCER: "LANCER",
   POINT: "POINT",
-  PLACE: "PLACE"
+  PLACE: "PLACE",
+  DOUBLE: "DOUBLE"
 };
 
 new Lancer();
