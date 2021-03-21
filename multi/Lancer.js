@@ -100,7 +100,7 @@
     } else {
       switch (variable.cle) {
         case Lancer.MESSAGE.LANCER:
-          console.log("lance voir si double autre joueur     " + message.double);
+          //console.log("lance voir si double autre joueur     " + message.double);
           this.voirSiDoubleAutreJoueur(message.valeur, message.double);
           break;
         case Lancer.MESSAGE.POINT:
@@ -184,6 +184,8 @@
       valeur: forceLancer,
       double: this.lancerDouble
     };
+    this.multiNode.posterVariableTextuelle(Lancer.MESSAGE.LANCER, JSON.stringify(message));
+    
     if (this.lancerDouble == true){
       this.boutonLancer.disabled = false;
     }
@@ -192,17 +194,16 @@
     }
 
     this.lancerDouble = false;
-    this.multiNode.posterVariableTextuelle(Lancer.MESSAGE.LANCER, JSON.stringify(message));
   }
 
   voirSiDoubleAutreJoueur(valeur, double){
     if (double == false) {
-      console.log("double est faut le bouton est FAUX -----------------")
+      //console.log("double est faut le bouton est FAUX -----------------")
       this.boutonLancer.disabled = false;
       this.subirLancer(valeur);
     }
     if(double == true) {
-      console.log("double est faut le bouton est VRAI---------------------")
+      //console.log("double est faut le bouton est VRAI---------------------")
       this.boutonLancer.disabled = true;
       this.subirLancer(valeur);
     }
@@ -234,6 +235,7 @@
   validerFinPartie() {
     console.log("validerFinPartie");
     if (this.listeJoueur[this.pseudonymeJoueur].point >= 60) {
+      confetti.start();
       alert("Vous avez gagné!");
     } else if (this.listeJoueur[this.pseudonymeAutreJoueur].point >= 60) {
       alert("Vous avez perdu!");
