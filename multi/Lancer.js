@@ -39,7 +39,7 @@
       this.pseudonymeAutreJoueur = autresParticipants[0];
       this.ajouterJoueur(autresParticipants[0]);
       for (let index = 0; index < 2; index++) {
-        console.log("autre boucle");
+        //console.log("autre boucle");
         if (this.listeJoueur[this.pseudonymeJoueur].place != 0) {
           if (this.listeJoueur[this.pseudonymeJoueur].place == 1) {
             this.listeJoueur[this.pseudonymeAutreJoueur].place = 2;
@@ -142,7 +142,7 @@
   }
 
   definirPlaceAutreJoueur(){
-    console.log("definirPlaceAutreJoueur" + this.listeJoueur[this.pseudonymeJoueur].place);
+    //console.log("definirPlaceAutreJoueur" + this.listeJoueur[this.pseudonymeJoueur].place);
     if(this.listeJoueur[this.pseudonymeJoueur].place == 1){
       console.log("definir autre joueur sur 2");
       this.listeJoueur[this.pseudonymeAutreJoueur].place = 2;
